@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MA GROUP - منصة التسويق الذكية</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#e5c158',
+                            500: '#d4a359',
+                            600: '#b8860b',
+                        },
+                        darkBg: '#0f172a',
+                        cardDark: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js & html2pdf -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .gold-gradient { background: linear-gradient(135deg, #d4a359 0%, #f3e0aa 50%, #b8860b 100%); }
+        .gold-text { background: linear-gradient(135deg, #d4a359 0%, #f3e0aa 50%, #b8860b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-panel { backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Branding / Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('auth')">
+                <svg class="w-10 h-10 text-gold-500" viewBox="0 0 100 100">
+                    <path d="M20 75 L50 35 L80 75 L68 75 L50 50 L32 75 Z" fill="#d4a359" />
+                    <path d="M35 45 L50 25 L65 45 L57 45 L50 35 L43 45 Z" fill="#f3e0aa" />
+                </svg>
+                <div>
+                    <h1 class="text-xl font-black tracking-wider text-slate-900 dark:text-white font-serif">MA GROUP</h1>
+                    <p class="text-[10px] text-gold-500 font-semibold tracking-widest uppercase">Best Company</p>
+                </div>
+            </div>
+
+            <!-- Controls & User Badge -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Toggle -->
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-400 hover:scale-105 transition">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Status Badge / Logout -->
+                <div id="navUserArea" class="hidden flex items-center gap-2">
+                    <span id="navUserName" class="text-sm font-bold bg-slate-200 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-gold-500/30"></span>
+                    <button onclick="logout()" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg" title="تسجيل الخروج">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- WhatsApp Floating Quick Help Button -->
+    <a href="https://wa.me/201155540450" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-2 group transition-all duration-300 hover:scale-110">
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-sm font-bold">تواصل مع الدعم الفني</span>
+    </a>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ================= AUTH SECTION ================= -->
+        <section id="authSection" class="max-w-md mx-auto my-8">
+            <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-2 gold-gradient"></div>
+                
+                <!-- Logo Display -->
+                <div class="text-center mb-6">
+                    <svg class="w-16 h-16 mx-auto mb-2" viewBox="0 0 100 100">
+                        <path d="M20 75 L50 35 L80 75 L68 75 L50 50 L32 75 Z" fill="#d4a359" />
+                        <path d="M35 45 L50 25 L65 45 L57 45 L50 35 L43 45 Z" fill="#f3e0aa" />
+                    </svg>
+                    <h2 class="text-2xl font-black text-slate-800 dark:text-white">بوابة الدخول | MA GROUP</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">سجل دخولك أو أنشئ حساب مسوق جديد</p>
+                </div>
+
+                <!-- Auth Tabs -->
+                <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6">
+                    <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 font-bold text-gold-500 border-b-2 border-gold-500">تسجيل الدخول</button>
+                    <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">تسجيل جديد</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">البريد الإلكتروني (اتركه فارغاً إذا كنت مشرفاً)</label>
+                        <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm" placeholder="marketer@magroup.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">كلمة السر</label>
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm" placeholder="••••••••">
+                    </div>
+                    <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-xl font-bold gold-gradient text-slate-900 shadow-lg hover:brightness-110 transition">تسجيل الدخول</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">الاسم الكامل</label>
+                        <input type="text" id="regName" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">البريد الإلكتروني</label>
+                        <input type="email" id="regEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">رقم الهاتف (مصر - 11 رقم)</label>
+                        <input type="tel" id="regPhone" required placeholder="01012345678" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">كلمة السر</label>
+                        <input type="password" id="regPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">طريقة وسيلة الدفع (سحب العمولات)</label>
+                        <select id="regPayMethod" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                            <option value="محفظة إلكترونية (فودافون/اتصالات/أورنج/أنا فودافون)">محفظة إلكترونية (فودافون كاش / أورنج / إتصلات / وي)</option>
+                            <option value="حساب بنكي">حساب بنكي</option>
+                            <option value="إنستا باي (InstaPay)">إنستا باي (InstaPay)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">رقم المحفظة / رقم الحساب للسحب</label>
+                        <input type="text" id="regPayNumber" required placeholder="010xxxxxxx أو رقم الحساب" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold gold-gradient text-slate-900 shadow-lg hover:brightness-110 transition mt-2">إنشاء حساب جديد</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= MARKETER DASHBOARD ================= -->
+        <section id="marketerDashboard" class="space-y-6 hidden">
+            
+            <!-- Welcome Header & Tier Status -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Profile / Level Card -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span id="userTierBadge" class="text-xs font-black uppercase px-3 py-1 rounded-full gold-gradient text-slate-900">برونزي</span>
+                            <h2 id="marketerNameHeading" class="text-xl font-bold mt-2">مرحباً بك!</h2>
+                            <p id="marketerEmailSub" class="text-xs text-slate-500 dark:text-slate-400"></p>
+                        </div>
+                        <i class="fa-solid fa-award text-5xl text-gold-500/20"></i>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span>التقدم للمستوى التالي</span>
+                            <span id="tierProgressText">0 / 10 عملاء</span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div id="tierProgressBar" class="gold-gradient h-full w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly & Weekly Targets -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3"><i class="fa-solid fa-bullseye text-gold-500 ml-1"></i> أهداف المبيعات المطلوبة</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span>الهدف الأسبوعي:</span>
+                                <span id="weeklyTargetText" class="font-bold">0 / 3 عملاء</span>
+                            </div>
+                        </div>
+                        <hr class="border-slate-200 dark:border-slate-800">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span>الهدف الشهري:</span>
+                                <span id="monthlyTargetText" class="font-bold">0 / 12 عميل</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Summary Card -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-2"><i class="fa-solid fa-wallet text-gold-500 ml-1"></i> محفظة العمولات</h3>
+                        <div class="grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-slate-50 dark:bg-slate-800 p-2 rounded-xl">
+                                <span class="text-[10px] text-slate-500 block">المتاحة للسحب</span>
+                                <span id="walletAvailable" class="text-lg font-black text-emerald-500">0 ج.م</span>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-800 p-2 rounded-xl">
+                                <span class="text-[10px] text-slate-500 block">أرباح معلقة</span>
+                                <span id="walletPending" class="text-lg font-black text-amber-500">0 ج.م</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="requestPayout()" class="w-full mt-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-money-bill-transfer ml-1"></i> طلب سحب الرصيد
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics & Gamified Quests Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Visual Analytics Chart -->
+                <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-base"><i class="fa-chart-line text-gold-500 ml-2"></i> إحصائيات الأداء والأرباح</h3>
+                        <button onclick="exportReportPDF()" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-800 hover:bg-gold-500 hover:text-slate-900 rounded-lg transition font-bold">
+                            <i class="fa-file-pdf ml-1"></i> تصدير تقرير PDF
+                        </button>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="marketerChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Challenge / Quest Box -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-trophy text-amber-400 text-xl"></i>
+                            <h3 class="font-bold text-base">تحدي الشهر الحالي</h3>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gold-500/10 border border-gold-500/30">
+                            <p class="text-xs font-bold text-gold-600 dark:text-gold-400">تحدي الـ 5 عملاء!</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">حقّق 5 عملاء ناجحين هذا الشهر واكسب مكافأة بونص إضافية 500 ج.م فوق عمولتك الـ 20%!</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <span>نسبة إنجاز التحدي</span>
+                            <span id="questPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="questBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client / Lead Tracker & Add Client Form -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-users text-gold-500 ml-2"></i> سجل العملاء والمبيعات (Lead Tracker)</h3>
+                    <button onclick="toggleModal('addClientModal', true)" class="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-slate-900 font-bold rounded-xl text-xs transition">
+                        <i class="fa-plus ml-1"></i> إضافة عميل جديد
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">اسم العميل</th>
+                                <th class="p-3">رقم الهاتف</th>
+                                <th class="p-3">المشروع / الخدمة</th>
+                                <th class="p-3">قيمة الصفقة</th>
+                                <th class="p-3">العمولة (20%)</th>
+                                <th class="p-3">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody" class="divide-y border-slate-200 dark:border-slate-800">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Disputes & Complaints Center (Marketer View) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Submit Complaint -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-bold text-base mb-4"><i class="fa-solid fa-headset text-gold-500 ml-2"></i> تقديم شكوى أو استفسار جديد</h3>
+                    <form onsubmit="submitComplaint(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold mb-1">عنوان الشكوى / الموضوع</label>
+                            <input type="text" id="compSubject" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1">تفاصيل الشكوى</label>
+                            <textarea id="compMessage" rows="3" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs"></textarea>
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 text-white font-bold rounded-xl text-xs hover:bg-gold-500 hover:text-slate-900 transition">إرسال الشكوى</button>
+                    </form>
+                </div>
+
+                <!-- View Complaint History & Resolutions -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-bold text-base mb-4"><i class="fa-solid fa-history text-gold-500 ml-2"></i> أرشيف الشكاوى والردود</h3>
+                    <div id="marketerComplaintsList" class="space-y-3 max-h-60 overflow-y-auto">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ADMIN DASHBOARD ================= -->
+        <section id="adminDashboard" class="space-y-6 hidden">
+            <div class="bg-slate-900 text-white p-6 rounded-2xl border border-gold-500/40 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="text-xs font-bold text-gold-400 uppercase tracking-widest">لوحة التحكم العليا</span>
+                    <h2 class="text-2xl font-black">إدارة منصة MA GROUP</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleModal('adminSettingsModal', true)" class="px-4 py-2 bg-gold-500 text-slate-900 font-bold rounded-xl text-xs hover:bg-gold-400 transition">
+                        <i class="fa-gear ml-1"></i> إعدادات المنصة المتقدمة
+                    </button>
+                </div>
+            </div>
+
+            <!-- Executive Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-500">إجمالي المبيعات المحققة</span>
+                    <h4 id="adminTotalSales" class="text-xl font-black text-emerald-500 mt-1">0 ج.م</h4>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-500">إجمالي العمولات المستحقة (20%)</span>
+                    <h4 id="adminTotalCommissions" class="text-xl font-black text-gold-500 mt-1">0 ج.م</h4>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-500">عدد المسوقين المسجلين</span>
+                    <h4 id="adminTotalMarketers" class="text-xl font-black text-blue-500 mt-1">0</h4>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-500">الشكاوى المفتوحة</span>
+                    <h4 id="adminOpenComplaints" class="text-xl font-black text-red-500 mt-1">0</h4>
+                </div>
+            </div>
+
+            <!-- Marketers Management Table -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-users-gear text-gold-500 ml-2"></i> إدارة المسوقين الصلاحيات والبيانات</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">المسوق</th>
+                                <th class="p-3">البريد الإلكتروني</th>
+                                <th class="p-3">كلمة السر (السرية)</th>
+                                <th class="p-3">الهاتف وطريقة الدفع</th>
+                                <th class="p-3">تأكيد المحفظة</th>
+                                <th class="p-3">المستوى</th>
+                                <th class="p-3">الحالة</th>
+                                <th class="p-3">إجراءات التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMarketersTable" class="divide-y border-slate-200 dark:border-slate-800">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Complaints Support Desk (Admin Side) -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-headset text-gold-500 ml-2"></i> مركز حل الشكاوى والاستفسارات</h3>
+                <div id="adminComplaintsList" class="space-y-4">
+                    <!-- Dynamic complaints list with response box -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Add Lead Modal -->
+    <div id="addClientModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">إضافة عميل / صفقة جديدة</h3>
+                <button onclick="toggleModal('addClientModal', false)" class="text-slate-400 hover:text-white"><i class="fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="handleAddClient(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold mb-1">اسم العميل</label>
+                    <input type="text" id="clientName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">رقم هاتف العميل</label>
+                    <input type="tel" id="clientPhone" required placeholder="01xxxxxxxxx" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">المشروع / الخدمة</label>
+                    <select id="clientProject" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                        <!-- Dynamic Options populated by Admin -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">قيمة الصفقة (بالجنيه المصري)</label>
+                    <input type="number" id="clientAmount" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-900 font-bold rounded-xl text-xs hover:brightness-110">تسجيل العميل</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Platform Settings Modal -->
+    <div id="adminSettingsModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-lg w-full border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">إعدادات المنصة المتقدمة</h3>
+                <button onclick="toggleModal('adminSettingsModal', false)" class="text-slate-400 hover:text-white"><i class="fa-xmark text-xl"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                
+                <!-- Admin Password Change -->
+                <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                    <span class="font-bold block">تغيير كلمة سر المشرف</span>
+                    <input type="password" id="newAdminPassword" placeholder="كلمة السر الجديدة للمشرف" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    <button onclick="updateAdminPass()" class="px-3 py-1.5 bg-gold-500 text-slate-900 font-bold rounded-lg">حفظ كلمة السر</button>
+                </div>
+
+                <!-- Registration Limits & Targets -->
+                <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                    <span class="font-bold block">التحكم في التسجيل والأهداف</span>
+                    <div>
+                        <label class="block text-[10px] text-slate-400">الحد الأقصى للمسوقين الجدد</label>
+                        <input type="number" id="settingMaxReg" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-slate-400">الهدف الأسبوعي (عملاء)</label>
+                            <input type="number" id="settingWeeklyTarget" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400">الهدف الشهري (عملاء)</label>
+                            <input type="number" id="settingMonthlyTarget" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        </div>
+                    </div>
+                    <button onclick="savePlatformLimits()" class="px-3 py-1.5 bg-gold-500 text-slate-900 font-bold rounded-lg">حفظ القيود والأهداف</button>
+                </div>
+
+                <!-- Custom Blocked User Message -->
+                <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                    <span class="font-bold block">رسالة إيقاف الحسابات</span>
+                    <textarea id="settingBlockedMsg" rows="2" placeholder="الرسالة التي تظهر للمسوق الموقوف..." class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"></textarea>
+                    <button onclick="saveBlockedMsg()" class="px-3 py-1.5 bg-gold-500 text-slate-900 font-bold rounded-lg">حفظ نص الرسالة</button>
+                </div>
+
+                <!-- Manage Projects -->
+                <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                    <span class="font-bold block">إدارة قائمة المشاريع المتاحة</span>
+                    <div class="flex gap-2">
+                        <input type="text" id="newProjectName" placeholder="اسم المشروع الجديد" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        <button onclick="addProject()" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg">إضافة</button>
+                    </div>
+                    <ul id="adminProjectsList" class="space-y-1 mt-2">
+                        <!-- Dynamic Projects -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Marketer Modal (Admin) -->
+    <div id="editMarketerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <h3 class="font-bold text-lg mb-4">تعديل بيانات المسوق</h3>
+            <input type="hidden" id="editMarketerId">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold mb-1">تعديل البريد الإلكتروني</label>
+                    <input type="email" id="editMarketerEmail" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">تعديل كلمة السر</label>
+                    <input type="text" id="editMarketerPass" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">ترقية/تعديل المستوى</label>
+                    <select id="editMarketerTier" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                        <option value="برونزي">برونزي (Bronze)</option>
+                        <option value="فضي">فضي (Silver)</option>
+                        <option value="ذهبي">ذهبي (Gold)</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="toggleModal('editMarketerModal', false)" class="px-4 py-2 bg-slate-700 text-white font-bold rounded-xl">إلغاء</button>
+                    <button onclick="saveMarketerEdits()" class="px-4 py-2 bg-gold-500 text-slate-900 font-bold rounded-xl">حفظ التغييرات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Blocked Overlay Screen -->
+    <div id="blockedAccountOverlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center hidden p-6 text-center">
+        <div class="max-w-md bg-slate-900 border border-red-500/50 p-8 rounded-3xl shadow-2xl space-y-4">
+            <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white">تم إيقاف حسابك من قبل الإدارة</h2>
+            <p id="blockedReasonText" class="text-sm text-slate-300 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                <!-- Custom text from admin -->
+            </p>
+            <p class="text-xs text-slate-500">للاستفسار يرجى التواصل عبر واتساب الدعم الفني للمنصة.</p>
+            <button onclick="logout()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition">الخروج من المنصة</button>
+        </div>
+    </div>
+
+    <!-- Lockout Complaint Modal -->
+    <div id="lockoutModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-amber-500 p-6 rounded-3xl max-w-md w-full text-center space-y-4">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-amber-500"></i>
+            <h3 class="text-lg font-bold text-white">محاولات دخول خاطئة مكررة</h3>
+            <p class="text-xs text-slate-300">لقد أدخلت بيانات غير صحيحة أكثر من مرة. تم إغلاق زر الدخول مؤقتاً.</p>
+            <a href="https://wa.me/201155540450?text=أواجه%20مشكلة%20في%20تسجيل%20الدخول%20لحسابي" target="_blank" class="block w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs">
+                <i class="fa-brands fa-whatsapp ml-1"></i> إرسال طلب شكوى عبر واتساب
+            </a>
+            <button onclick="toggleModal('lockoutModal', false)" class="text-xs text-slate-500 underline">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-4 text-center bg-white dark:bg-slate-900">
+        <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">
+            devloped by <span class="text-blue-500 font-extrabold tracking-wider">mohamed &lt;/&gt;</span>
+        </p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAlyBmoOLSZ-Ja4lU1QEoGmbK0DoE-PVSU",
+            authDomain: "ma-group-6cea7.firebaseapp.com",
+            databaseURL: "https://ma-group-6cea7-default-rtdb.firebaseio.com",
+            projectId: "ma-group-6cea7",
+            storageBucket: "ma-group-6cea7.firebasestorage.app",
+            messagingSenderId: "746240589488",
+            appId: "1:746240589488:web:6e7bfdea0605eb33394575",
+            measurementId: "G-NRZ8YFEMFT"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- GLOBAL STATE ---
+        let currentUser = null;
+        let failedLoginAttempts = 0;
+        let projectsList = ['برج العاصمة', 'مشروع كومباوند زايد', 'خدمات تسويق عقاري', 'استشارات هندسية'];
+        let platformSettings = {
+            adminPass: '4847',
+            maxRegistrations: 100,
+            weeklyTarget: 3,
+            monthlyTarget: 12,
+            blockedMsg: 'عذراً، تم إيقاف حسابك مؤقتاً لمراجعة النشاط. يرجى التواصل مع الإدارة.'
+        };
+
+        // --- LOCAL DATABASE / CACHE ENGINE ---
+        let usersData = JSON.parse(localStorage.getItem('magroup_users')) || [];
+        let clientsData = JSON.parse(localStorage.getItem('magroup_clients')) || [];
+        let complaintsData = JSON.parse(localStorage.getItem('magroup_complaints')) || [];
+
+        // Load Settings from DB if available
+        db.ref('settings').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                platformSettings = Object.assign(platformSettings, snapshot.val());
+            }
+        });
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            renderProjects();
+            checkSavedSession();
+        });
+
+        // --- DARK / LIGHT MODE CONTROLLER ---
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-sun text-amber-500';
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-moon text-gold-400';
+            }
+        }
+
+        // --- UI NAVIGATION ---
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                tabLogin.className = 'flex-1 py-2 font-bold text-gold-500 border-b-2 border-gold-500';
+                tabRegister.className = 'flex-1 py-2 font-bold text-slate-400 hover:text-slate-200';
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                tabRegister.className = 'flex-1 py-2 font-bold text-gold-500 border-b-2 border-gold-500';
+                tabLogin.className = 'flex-1 py-2 font-bold text-slate-400 hover:text-slate-200';
+            }
+        }
+
+        function toggleModal(id, show) {
+            const el = document.getElementById(id);
+            if (show) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        }
+
+        // --- AUTHENTICATION ENGINE ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const btn = document.getElementById('loginSubmitBtn');
+
+            // 1. ADMIN LOGIN CHECK
+            if (password === platformSettings.adminPass && (email === '' || email.toLowerCase().includes('admin'))) {
+                currentUser = { role: 'admin', name: 'المشرف الرئيسي' };
+                sessionStorage.setItem('magroup_session', JSON.stringify(currentUser));
+                showSection('admin');
+                failedLoginAttempts = 0;
+                return;
+            }
+
+            // 2. MARKETER LOGIN CHECK
+            const user = usersData.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+
+            if (user) {
+                if (user.isBlocked) {
+                    showBlockedOverlay(user.blockedMessage || platformSettings.blockedMsg);
+                    return;
+                }
+                currentUser = user;
+                sessionStorage.setItem('magroup_session', JSON.stringify(currentUser));
+                failedLoginAttempts = 0;
+                showSection('marketer');
+            } else {
+                // FAILED LOGIN ATTEMPTS HANDLING
+                failedLoginAttempts++;
+                if (failedLoginAttempts === 3) {
+                    btn.disabled = true;
+                    btn.innerText = 'تم القفل (10 ثوانٍ)...';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerText = 'تسجيل الدخول';
+                    }, 10000);
+                    alert('خطأ 3 مرات! تم قفل زر الدخول لمدة 10 ثوانٍ.');
+                } else if (failedLoginAttempts >= 6) {
+                    btn.disabled = true;
+                    btn.innerText = 'مغلق (30 ثانية)...';
+                    toggleModal('lockoutModal', true);
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerText = 'تسجيل الدخول';
+                    }, 30000);
+                } else {
+                    alert('البريد الإلكتروني أو كلمة السر غير صحيحة!');
+                }
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            
+            // Limit Check
+            if (usersData.length >= platformSettings.maxRegistrations) {
+                alert('عذراً، اكتمل الحد الأقصى للتسجيل الجديد على المنصة حالياً.');
+                return;
+            }
+
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const payMethod = document.getElementById('regPayMethod').value;
+            const payNumber = document.getElementById('regPayNumber').value.trim();
+
+            // VALIDATION: Egyptian Phone format (01xxxxxxxxx - 11 digits)
+            const phoneRegex = /^01[0125][0-9]{8}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('يرجى إدخال رقم هاتف مصري صحيح يتكون من 11 رقم ويتم تبدأ بـ 010 أو 011 أو 012 أو 015');
+                return;
+            }
+
+            // Email Regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('يرجى إدخال بريد إلكتروني صحيح!');
+                return;
+            }
+
+            if (usersData.find(u => u.email === email)) {
+                alert('هذا البريد الإلكتروني مسجل بالفعل!');
+                return;
+            }
+
+            const newUser = {
+                id: 'M-' + Date.now(),
+                name,
+                email,
+                phone,
+                password,
+                payMethod,
+                payNumber,
+                tier: 'برونزي',
+                isBlocked: false,
+                isPayVerified: false,
+                role: 'marketer'
+            };
+
+            usersData.push(newUser);
+            localStorage.setItem('magroup_users', JSON.stringify(usersData));
+            db.ref('users/' + newUser.id).set(newUser);
+
+            alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            switchAuthTab('login');
+        }
+
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('magroup_session');
+            document.getElementById('blockedAccountOverlay').classList.add('hidden');
+            showSection('auth');
+        }
+
+        function checkSavedSession() {
+            const saved = sessionStorage.getItem('magroup_session');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                if (currentUser.role === 'admin') showSection('admin');
+                else showSection('marketer');
+            } else {
+                showSection('auth');
+            }
+        }
+
+        function showSection(section) {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('marketerDashboard').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+
+            const navUserArea = document.getElementById('navUserArea');
+            const navUserName = document.getElementById('navUserName');
+
+            if (section === 'auth') {
+                document.getElementById('authSection').classList.remove('hidden');
+                navUserArea.classList.add('hidden');
+            } else if (section === 'marketer') {
+                document.getElementById('marketerDashboard').classList.remove('hidden');
+                navUserArea.classList.remove('hidden');
+                navUserName.innerText = currentUser.name;
+                loadMarketerData();
+            } else if (section === 'admin') {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                navUserArea.classList.remove('hidden');
+                navUserName.innerText = 'المشرف العام';
+                loadAdminData();
+            }
+        }
+
+        function showBlockedOverlay(msg) {
+            document.getElementById('blockedReasonText').innerText = msg;
+            document.getElementById('blockedAccountOverlay').classList.remove('hidden');
+        }
+
+        // --- MARKETER LOGIC ---
+        function loadMarketerData() {
+            document.getElementById('marketerNameHeading').innerText = 'أهلاً بك، ' + currentUser.name;
+            document.getElementById('marketerEmailSub').innerText = currentUser.email;
+
+            // Clients & Commission Logic
+            const myClients = clientsData.filter(c => c.marketerId === currentUser.id);
+            const soldClients = myClients.filter(c => c.status === 'تم البيع');
+            
+            // Auto-Tier Promotion Logic
+            let currentTier = 'برونزي';
+            if (soldClients.length >= 30) currentTier = 'ذهبي';
+            else if (soldClients.length >= 10) currentTier = 'فضي';
+            
+            currentUser.tier = currentTier;
+            document.getElementById('userTierBadge').innerText = currentTier;
+
+            // Tier Progress Bar
+            let progressMax = currentTier === 'برونزي' ? 10 : 30;
+            let progressPercent = Math.min(100, (soldClients.length / progressMax) * 100);
+            document.getElementById('tierProgressBar').style.width = progressPercent + '%';
+            document.getElementById('tierProgressText').innerText = `${soldClients.length} / ${progressMax} عميل`;
+
+            // Targets
+            document.getElementById('weeklyTargetText').innerText = `${soldClients.length} / ${platformSettings.weeklyTarget} عميل`;
+            document.getElementById('monthlyTargetText').innerText = `${soldClients.length} / ${platformSettings.monthlyTarget} عميل`;
+
+            // Wallet Values
+            let totalAvailable = 0;
+            let totalPending = 0;
+            myClients.forEach(c => {
+                const comm = c.amount * 0.20;
+                if (c.status === 'تم البيع') totalAvailable += comm;
+                else if (c.status === 'جاري المتابعة') totalPending += comm;
+            });
+
+            document.getElementById('walletAvailable').innerText = totalAvailable.toLocaleString() + ' ج.م';
+            document.getElementById('walletPending').innerText = totalPending.toLocaleString() + ' ج.م';
+
+            // Quests Update
+            let questPercent = Math.min(100, (soldClients.length / 5) * 100);
+            document.getElementById('questBar').style.width = questPercent + '%';
+            document.getElementById('questPercent').innerText = questPercent.toFixed(0) + '%';
+
+            renderMarketerClientsTable(myClients);
+            renderMarketerComplaints();
+        }
+
+        function handleAddClient(e) {
+            e.preventDefault();
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const project = document.getElementById('clientProject').value;
+            const amount = parseFloat(document.getElementById('clientAmount').value);
+
+            // Fraud Prevention: Check Duplicate Lead
+            const duplicate = clientsData.find(c => c.phone === phone);
+            if (duplicate) {
+                alert('تنبيه أمان: هذا العميل ورقم الهاتف مسجل بالفعل مسبقاً في النظام!');
+                return;
+            }
+
+            const newClient = {
+                id: 'C-' + Date.now(),
+                marketerId: currentUser.id,
+                marketerName: currentUser.name,
+                name,
+                phone,
+                project,
+                amount,
+                status: 'جاري المتابعة'
+            };
+
+            clientsData.push(newClient);
+            localStorage.setItem('magroup_clients', JSON.stringify(clientsData));
+            db.ref('clients/' + newClient.id).set(newClient);
+
+            alert('تم إدراج بيانات العميل بنجاح!');
+            toggleModal('addClientModal', false);
+            loadMarketerData();
+        }
+
+        function renderMarketerClientsTable(list) {
+            const body = document.getElementById('clientsTableBody');
+            body.innerHTML = '';
+            list.forEach(c => {
+                const comm = c.amount * 0.20;
+                let statusBadge = c.status === 'تم البيع' ? 'bg-emerald-500/10 text-emerald-500' : (c.status === 'تم الإلغاء' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500');
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="p-3 font-bold">${c.name}</td>
+                        <td class="p-3">${c.phone}</td>
+                        <td class="p-3">${c.project}</td>
+                        <td class="p-3 font-bold">${c.amount.toLocaleString()} ج.م</td>
+                        <td class="p-3 text-emerald-500 font-bold">${comm.toLocaleString()} ج.م</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusBadge}">${c.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function requestPayout() {
+            alert('تم تقديم طلب سحب العمولات المتاحة للمشرف! سيتم التحويل والتحقق خلال الوقت المحدد لمستواك.');
+        }
+
+        // --- COMPLAINTS ENGINE (MARKETER) ---
+        function submitComplaint(e) {
+            e.preventDefault();
+            const subject = document.getElementById('compSubject').value;
+            const msg = document.getElementById('compMessage').value;
+
+            const comp = {
+                id: 'TICK-' + Date.now(),
+                marketerId: currentUser.id,
+                marketerName: currentUser.name,
+                subject,
+                msg,
+                status: 'مفتوحة',
+                reply: ''
+            };
+
+            complaintsData.push(comp);
+            localStorage.setItem('magroup_complaints', JSON.stringify(complaintsData));
+            db.ref('complaints/' + comp.id).set(comp);
+
+            alert('تم إرسال الشكوى بنجاح وسيتم رد المشرف عليها.');
+            document.getElementById('compSubject').value = '';
+            document.getElementById('compMessage').value = '';
+            renderMarketerComplaints();
+        }
+
+        function renderMarketerComplaints() {
+            const container = document.getElementById('marketerComplaintsList');
+            container.innerHTML = '';
+            const myComps = complaintsData.filter(c => c.marketerId === currentUser.id);
+
+            if (myComps.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">لا توجد شكاوى أو استفسارات سابقة.</p>';
+                return;
+            }
+
+            myComps.forEach(c => {
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>${c.subject}</span>
+                            <span class="${c.status === 'تم الحل' ? 'text-emerald-500' : 'text-amber-500'}">${c.status}</span>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 mb-2">${c.msg}</p>
+                        ${c.reply ? `<div class="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg"><strong>رد المشرف:</strong> ${c.reply}</div>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        // --- ADMIN ENGINE ---
+        function loadAdminData() {
+            // Stats Calculations
+            let totalSales = 0;
+            clientsData.filter(c => c.status === 'تم البيع').forEach(c => totalSales += c.amount);
+            let totalComms = totalSales * 0.20;
+
+            document.getElementById('adminTotalSales').innerText = totalSales.toLocaleString() + ' ج.م';
+            document.getElementById('adminTotalCommissions').innerText = totalComms.toLocaleString() + ' ج.م';
+            document.getElementById('adminTotalMarketers').innerText = usersData.length;
+            document.getElementById('adminOpenComplaints').innerText = complaintsData.filter(c => c.status === 'مفتوحة').length;
+
+            renderAdminMarketers();
+            renderAdminComplaints();
+            renderAdminSettings();
+        }
+
+        function renderAdminMarketers() {
+            const table = document.getElementById('adminMarketersTable');
+            table.innerHTML = '';
+
+            usersData.forEach(u => {
+                table.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="p-3 font-bold">${u.name}</td>
+                        <td class="p-3">${u.email}</td>
+                        <td class="p-3 font-mono text-gold-500 font-bold">${u.password}</td>
+                        <td class="p-3">${u.phone}<br><span class="text-[10px] text-slate-400">${u.payMethod}: ${u.payNumber}</span></td>
+                        <td class="p-3">
+                            <button onclick="togglePayVerify('${u.id}')" class="px-2 py-1 rounded text-[10px] font-bold ${u.isPayVerified ? 'bg-emerald-500/20 text-emerald-500' : 'bg-red-500/20 text-red-500'}">
+                                ${u.isPayVerified ? 'مؤكدة' : 'غير مؤكدة'}
+                            </button>
+                        </td>
+                        <td class="p-3"><span class="font-bold text-gold-500">${u.tier}</span></td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold ${u.isBlocked ? 'bg-red-500/20 text-red-500' : 'bg-emerald-500/20 text-emerald-500'}">
+                                ${u.isBlocked ? 'موقوف' : 'نشط'}
+                            </span>
+                        </td>
+                        <td class="p-3 flex items-center gap-1">
+                            <button onclick="openEditMarketer('${u.id}')" class="p-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg" title="تعديل"><i class="fa-pen-to-square"></i></button>
+                            <button onclick="toggleBlockMarketer('${u.id}')" class="p-1.5 ${u.isBlocked ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} rounded-lg" title="حظر / إلغاء">
+                                <i class="fa-solid ${u.isBlocked ? 'fa-unlock' : 'fa-lock'}"></i>
+                            </button>
+                            <button onclick="deleteMarketer('${u.id}')" class="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg" title="حذف"><i class="fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function togglePayVerify(id) {
+            const u = usersData.find(x => x.id === id);
+            if (u) {
+                u.isPayVerified = !u.isPayVerified;
+                saveUsers();
+            }
+        }
+
+        function toggleBlockMarketer(id) {
+            const u = usersData.find(x => x.id === id);
+            if (u) {
+                u.isBlocked = !u.isBlocked;
+                saveUsers();
+            }
+        }
+
+        function deleteMarketer(id) {
+            if (confirm('هل أنت تأكد من إزالة هذا المسوق نهائياً من المنصة؟')) {
+                usersData = usersData.filter(x => x.id !== id);
+                saveUsers();
+            }
+        }
+
+        function openEditMarketer(id) {
+            const u = usersData.find(x => x.id === id);
+            if (u) {
+                document.getElementById('editMarketerId').value = u.id;
+                document.getElementById('editMarketerEmail').value = u.email;
+                document.getElementById('editMarketerPass').value = u.password;
+                document.getElementById('editMarketerTier').value = u.tier;
+                toggleModal('editMarketerModal', true);
+            }
+        }
+
+        function saveMarketerEdits() {
+            const id = document.getElementById('editMarketerId').value;
+            const u = usersData.find(x => x.id === id);
+            if (u) {
+                u.email = document.getElementById('editMarketerEmail').value;
+                u.password = document.getElementById('editMarketerPass').value;
+                u.tier = document.getElementById('editMarketerTier').value;
+                saveUsers();
+                toggleModal('editMarketerModal', false);
+            }
+        }
+
+        function saveUsers() {
+            localStorage.setItem('magroup_users', JSON.stringify(usersData));
+            loadAdminData();
+        }
+
+        // --- COMPLAINTS ENGINE (ADMIN) ---
+        function renderAdminComplaints() {
+            const list = document.getElementById('adminComplaintsList');
+            list.innerHTML = '';
+
+            if (complaintsData.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-400">لا توجد شكاوى مقدمة.</p>';
+                return;
+            }
+
+            complaintsData.forEach(c => {
+                list.innerHTML += `
+                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gold-500">${c.marketerName} - (${c.subject})</span>
+                            <span class="px-2 py-0.5 rounded ${c.status === 'تم الحل' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-red-500/20 text-red-500'} font-bold">${c.status}</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300">${c.msg}</p>
+                        <div class="flex gap-2 pt-2">
+                            <input type="text" id="reply-${c.id}" placeholder="اكتب حل الشكوى أو الرد..." value="${c.reply || ''}" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+                            <button onclick="resolveComplaint('${c.id}')" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg">إرسال والحل</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function resolveComplaint(id) {
+            const replyVal = document.getElementById(`reply-${id}`).value;
+            const comp = complaintsData.find(c => c.id === id);
+            if (comp) {
+                comp.reply = replyVal;
+                comp.status = 'تم الحل';
+                localStorage.setItem('magroup_complaints', JSON.stringify(complaintsData));
+                db.ref('complaints/' + id).update({ reply: replyVal, status: 'تم الحل' });
+                alert('تم تقديم الحل للمسوق وإغلاق الشكوى!');
+                loadAdminData();
+            }
+        }
+
+        // --- ADMIN SETTINGS ENGINE ---
+        function renderAdminSettings() {
+            document.getElementById('settingMaxReg').value = platformSettings.maxRegistrations;
+            document.getElementById('settingWeeklyTarget').value = platformSettings.weeklyTarget;
+            document.getElementById('settingMonthlyTarget').value = platformSettings.monthlyTarget;
+            document.getElementById('settingBlockedMsg').value = platformSettings.blockedMsg;
+        }
+
+        function updateAdminPass() {
+            const newP = document.getElementById('newAdminPassword').value.trim();
+            if (newP) {
+                platformSettings.adminPass = newP;
+                db.ref('settings').update({ adminPass: newP });
+                alert('تم تحديث كلمة سر المشرف بنجاح!');
+                document.getElementById('newAdminPassword').value = '';
+            }
+        }
+
+        function savePlatformLimits() {
+            platformSettings.maxRegistrations = parseInt(document.getElementById('settingMaxReg').value);
+            platformSettings.weeklyTarget = parseInt(document.getElementById('settingWeeklyTarget').value);
+            platformSettings.monthlyTarget = parseInt(document.getElementById('settingMonthlyTarget').value);
+            db.ref('settings').update(platformSettings);
+            alert('تم حفظ الأهداف والحدود!');
+        }
+
+        function saveBlockedMsg() {
+            platformSettings.blockedMsg = document.getElementById('settingBlockedMsg').value;
+            db.ref('settings').update({ blockedMsg: platformSettings.blockedMsg });
+            alert('تم حفظ نص رسالة الإيقاف!');
+        }
+
+        function renderProjects() {
+            const select = document.getElementById('clientProject');
+            const adminList = document.getElementById('adminProjectsList');
+            select.innerHTML = '';
+            adminList.innerHTML = '';
+
+            projectsList.forEach((p, idx) => {
+                select.innerHTML += `<option value="${p}">${p}</option>`;
+                adminList.innerHTML += `
+                    <li class="flex justify-between items-center bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span>${p}</span>
+                        <button onclick="removeProject(${idx})" class="text-red-500 font-bold"><i class="fa-trash"></i></button>
+                    </li>
+                `;
+            });
+        }
+
+        function addProject() {
+            const val = document.getElementById('newProjectName').value.trim();
+            if (val) {
+                projectsList.push(val);
+                document.getElementById('newProjectName').value = '';
+                renderProjects();
+            }
+        }
+
+        function removeProject(idx) {
+            projectsList.splice(idx, 1);
+            renderProjects();
+        }
+
+        // --- VISUAL ANALYTICS & EXPORT REPORT ---
+        function initChart() {
+            const ctx = document.getElementById('marketerChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
+                    datasets: [{
+                        label: 'العملاء المحققين',
+                        data: [2, 5, 3, 7],
+                        borderColor: '#d4a359',
+                        backgroundColor: 'rgba(212, 163, 89, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function exportReportPDF() {
+            const element = document.getElementById('marketerDashboard');
+            html2pdf().from(element).save(`MA_Group_Report_${currentUser.name}.pdf`);
+        }
+    </script>
+</body>
+</html> 
