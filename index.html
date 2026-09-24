@@ -552,16 +552,17 @@
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAlyBmoOLSZ-Ja4lU1QEoGmbK0DoE-PVSU",
-            authDomain: "ma-group-6cea7.firebaseapp.com",
-            databaseURL: "https://ma-group-6cea7-default-rtdb.firebaseio.com",
-            projectId: "ma-group-6cea7",
-            storageBucket: "ma-group-6cea7.firebasestorage.app",
-            messagingSenderId: "746240589488",
-            appId: "1:746240589488:web:6e7bfdea0605eb33394575",
-            measurementId: "G-NRZ8YFEMFT"
+            apiKey: "AIzaSyDY7W6aM2_QaOOCHayKfynOFTrVOMUa0nI",
+            authDomain: "ma-group2.firebaseapp.com",
+            databaseURL: "https://ma-group2-default-rtdb.firebaseio.com",
+            projectId: "ma-group2",
+            storageBucket: "ma-group2.firebasestorage.app",
+            messagingSenderId: "317927675654",
+            appId: "1:317927675654:web:1a6e8662373b8730267087",
+            measurementId: "G-L5NV4Q7PZY"
         };
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
         const db = firebase.database();
 
         // --- GLOBAL STATE ---
@@ -1181,4 +1182,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
