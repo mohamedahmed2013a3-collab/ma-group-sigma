@@ -577,17 +577,74 @@
             blockedMsg: 'عذراً، تم إيقاف حسابك مؤقتاً لمراجعة النشاط. يرجى التواصل مع الإدارة.'
         };
 
-        // --- LOCAL DATABASE / CACHE ENGINE ---
+        // --- LOCAL DATABASE / CACHE ENGINE & REALTIME SYNC ---
         let usersData = JSON.parse(localStorage.getItem('magroup_users')) || [];
         let clientsData = JSON.parse(localStorage.getItem('magroup_clients')) || [];
         let complaintsData = JSON.parse(localStorage.getItem('magroup_complaints')) || [];
 
-        // Load Settings from DB if available
+        // 1. Sync Settings from DB
         db.ref('settings').on('value', (snapshot) => {
             if (snapshot.exists()) {
                 platformSettings = Object.assign(platformSettings, snapshot.val());
+                if (currentUser && currentUser.role === 'admin') renderAdminSettings();
             }
         });
+
+        // 2. Sync Users in Realtime (Solves Mobile to Laptop sync)
+        db.ref('users').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                usersData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_users', JSON.stringify(usersData));
+            } else {
+                usersData = [];
+                localStorage.setItem('magroup_users', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        // 3. Sync Clients in Realtime
+        db.ref('clients').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                clientsData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_clients', JSON.stringify(clientsData));
+            } else {
+                clientsData = [];
+                localStorage.setItem('magroup_clients', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        // 4. Sync Complaints in Realtime
+        db.ref('complaints').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                complaintsData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_complaints', JSON.stringify(complaintsData));
+            } else {
+                complaintsData = [];
+                localStorage.setItem('magroup_complaints', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        function refreshCurrentUI() {
+            if (!currentUser) return;
+            if (currentUser.role === 'admin') {
+                loadAdminData();
+            } else if (currentUser.role === 'marketer') {
+                const updatedUser = usersData.find(u => u.id === currentUser.id);
+                if (updatedUser) {
+                    if (updatedUser.isBlocked) {
+                        showBlockedOverlay(updatedUser.blockedMessage || platformSettings.blockedMsg);
+                    }
+                    currentUser = Object.assign(currentUser, updatedUser);
+                    sessionStorage.setItem('magroup_session', JSON.stringify(currentUser));
+                }
+                loadMarketerData();
+            }
+        }
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
@@ -718,7 +775,7 @@
                 return;
             }
 
-            if (usersData.find(u => u.email === email)) {
+            if (usersData.find(u => u.email.toLowerCase() === email.toLowerCase())) {
                 alert('هذا البريد الإلكتروني مسجل بالفعل!');
                 return;
             }
@@ -1017,6 +1074,7 @@
         function deleteMarketer(id) {
             if (confirm('هل أنت تأكد من إزالة هذا المسوق نهائياً من المنصة؟')) {
                 usersData = usersData.filter(x => x.id !== id);
+                db.ref('users/' + id).remove();
                 saveUsers();
             }
         }
@@ -1046,6 +1104,11 @@
 
         function saveUsers() {
             localStorage.setItem('magroup_users', JSON.stringify(usersData));
+            const usersObj = {};
+            usersData.forEach(u => {
+                if (u && u.id) usersObj[u.id] = u;
+            });
+            db.ref('users').set(usersObj);
             loadAdminData();
         }
 
