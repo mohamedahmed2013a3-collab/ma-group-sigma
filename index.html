@@ -294,7 +294,7 @@
                 </div>
             </div>
 
-            <!-- Disputes & Complaints Center (Marketer View) -->
+            <!-- Payouts History & Complaints Center (Marketer View) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Submit Complaint -->
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -312,11 +312,11 @@
                     </form>
                 </div>
 
-                <!-- View Complaint History & Resolutions -->
+                <!-- Payout Requests History -->
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <h3 class="font-bold text-base mb-4"><i class="fa-solid fa-history text-gold-500 ml-2"></i> أرشيف الشكاوى والردود</h3>
-                    <div id="marketerComplaintsList" class="space-y-3 max-h-60 overflow-y-auto">
-                        <!-- Dynamic content -->
+                    <h3 class="font-bold text-base mb-4"><i class="fa-solid fa-clock-rotate-left text-gold-500 ml-2"></i> سجل طلبات سحب العمولات</h3>
+                    <div id="marketerPayoutsList" class="space-y-3 max-h-60 overflow-y-auto">
+                        <!-- Dynamic Payout History -->
                     </div>
                 </div>
             </div>
@@ -356,6 +356,28 @@
                 </div>
             </div>
 
+            <!-- Payout Requests Management Section (Admin) -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-money-bill-transfer text-gold-500 ml-2"></i> إدارة طلبات سحب العمولات</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">المسوق</th>
+                                <th class="p-3">المبلغ المطلوب</th>
+                                <th class="p-3">وسيلة الدفع والرقم</th>
+                                <th class="p-3">تاريخ الطلب</th>
+                                <th class="p-3">الحالة</th>
+                                <th class="p-3">إجراءات المشرف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPayoutsTable" class="divide-y border-slate-200 dark:border-slate-800">
+                            <!-- Dynamic Payout Requests -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Marketers Management Table -->
             <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-users-gear text-gold-500 ml-2"></i> إدارة المسوقين الصلاحيات والبيانات</h3>
@@ -392,6 +414,31 @@
     </main>
 
     <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Payout Request Modal -->
+    <div id="payoutModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-money-bill-transfer text-gold-500 ml-2"></i> طلب سحب الرصيد</h3>
+                <button onclick="toggleModal('payoutModal', false)" class="text-slate-400 hover:text-white"><i class="fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="handlePayoutSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold mb-1">الرصيد المتاح للسحب</label>
+                    <input type="text" id="payoutAvailableDisplay" readonly class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 font-bold text-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">المبلغ المراد سحبه (ج.م)</label>
+                    <input type="number" id="payoutAmount" min="1" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold outline-none focus:ring-2 focus:ring-gold-500">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">طريقة الوسيلة الحالية</label>
+                    <p id="payoutMethodDisplay" class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700"></p>
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition">إرسال طلب السحب للمشرف</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Add Lead Modal -->
     <div id="addClientModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
@@ -552,14 +599,14 @@
     <script>
         // --- FIREBASE CONFIGURATION (Compat SDK) ---
         const firebaseConfig = {
-            apiKey: "AIzaSyB-5CLiVzSy89ZBBvy2GNiL5-vTVHjQip4",
-            authDomain: "ma-group-44.firebaseapp.com",
-            databaseURL: "https://ma-group-44-default-rtdb.firebaseio.com",
-            projectId: "ma-group-44",
-            storageBucket: "ma-group-44.firebasestorage.app",
-            messagingSenderId: "561465504483",
-            appId: "1:561465504483:web:d2c0774cb4bb390a1d4bd6",
-            measurementId: "G-0V321C5W9C"
+            apiKey: "AIzaSyAPUok8ua-gDJOM3eDSiQPlb4TVHWlzIQI",
+            authDomain: "ma-group-3-bda92.firebaseapp.com",
+            databaseURL: "https://ma-group-3-bda92-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ma-group-3-bda92",
+            storageBucket: "ma-group-3-bda92.firebasestorage.app",
+            messagingSenderId: "313871631050",
+            appId: "1:313871631050:web:816bd0bc543c9edaa46a33",
+            measurementId: "G-526DGK5PKN"
         };
         const app = firebase.initializeApp(firebaseConfig);
         const analytics = firebase.analytics();
@@ -581,6 +628,7 @@
         let usersData = JSON.parse(localStorage.getItem('magroup_users')) || [];
         let clientsData = JSON.parse(localStorage.getItem('magroup_clients')) || [];
         let complaintsData = JSON.parse(localStorage.getItem('magroup_complaints')) || [];
+        let payoutsData = JSON.parse(localStorage.getItem('magroup_payouts')) || [];
 
         // 1. Sync Settings from DB
         db.ref('settings').on('value', (snapshot) => {
@@ -590,7 +638,7 @@
             }
         });
 
-        // 2. Sync Users in Realtime (Solves Mobile to Laptop sync)
+        // 2. Sync Users in Realtime
         db.ref('users').on('value', (snapshot) => {
             if (snapshot.exists()) {
                 const val = snapshot.val();
@@ -625,6 +673,19 @@
             } else {
                 complaintsData = [];
                 localStorage.setItem('magroup_complaints', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        // 5. Sync Payout Requests in Realtime
+        db.ref('payouts').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                payoutsData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_payouts', JSON.stringify(payoutsData));
+            } else {
+                payoutsData = [];
+                localStorage.setItem('magroup_payouts', JSON.stringify([]));
             }
             refreshCurrentUI();
         });
@@ -876,14 +937,19 @@
             document.getElementById('weeklyTargetText').innerText = `${soldClients.length} / ${platformSettings.weeklyTarget} عميل`;
             document.getElementById('monthlyTargetText').innerText = `${soldClients.length} / ${platformSettings.monthlyTarget} عميل`;
 
-            // Wallet Values
-            let totalAvailable = 0;
+            // Wallet Values Calculation (Total Earned - Approved Payouts)
+            let totalEarned = 0;
             let totalPending = 0;
             myClients.forEach(c => {
                 const comm = c.amount * 0.20;
-                if (c.status === 'تم البيع') totalAvailable += comm;
+                if (c.status === 'تم البيع') totalEarned += comm;
                 else if (c.status === 'جاري المتابعة') totalPending += comm;
             });
+
+            // Calculate Total Approved Withdrawn Amounts
+            const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
+            const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
+            let totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
 
             document.getElementById('walletAvailable').innerText = totalAvailable.toLocaleString() + ' ج.م';
             document.getElementById('walletPending').innerText = totalPending.toLocaleString() + ' ج.م';
@@ -895,6 +961,7 @@
 
             renderMarketerClientsTable(myClients);
             renderMarketerComplaints();
+            renderMarketerPayouts();
         }
 
         function handleAddClient(e) {
@@ -950,8 +1017,94 @@
             });
         }
 
+        // --- PAYOUT SYSTEM ENGINE ---
         function requestPayout() {
-            alert('تم تقديم طلب سحب العمولات المتاحة للمشرف! سيتم التحويل والتحقق خلال الوقت المحدد لمستواك.');
+            const myClients = clientsData.filter(c => c.marketerId === currentUser.id);
+            let totalEarned = 0;
+            myClients.forEach(c => {
+                if (c.status === 'تم البيع') totalEarned += (c.amount * 0.20);
+            });
+            const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
+            const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
+            const totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
+
+            if (totalAvailable <= 0) {
+                alert('عذراً، لا يوجد لديك رصيد متاح للسحب حالياً!');
+                return;
+            }
+
+            document.getElementById('payoutAvailableDisplay').value = totalAvailable.toLocaleString() + ' ج.م';
+            document.getElementById('payoutAmount').value = totalAvailable;
+            document.getElementById('payoutAmount').max = totalAvailable;
+            document.getElementById('payoutMethodDisplay').innerText = `${currentUser.payMethod || 'وسيلة الدفع'}: ${currentUser.payNumber || 'غير محدد'}`;
+            toggleModal('payoutModal', true);
+        }
+
+        function handlePayoutSubmit(e) {
+            e.preventDefault();
+            const amount = Number(document.getElementById('payoutAmount').value);
+
+            // Re-check Available balance
+            const myClients = clientsData.filter(c => c.marketerId === currentUser.id);
+            let totalEarned = 0;
+            myClients.forEach(c => {
+                if (c.status === 'تم البيع') totalEarned += (c.amount * 0.20);
+            });
+            const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
+            const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
+            const totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
+
+            if (amount <= 0 || amount > totalAvailable) {
+                alert('يرجى إدخال مبلغ صحيح لا يتجاوز الرصيد المتاح!');
+                return;
+            }
+
+            const payoutReq = {
+                id: 'PAY-' + Date.now(),
+                marketerId: currentUser.id,
+                marketerName: currentUser.name,
+                payMethod: currentUser.payMethod || '',
+                payNumber: currentUser.payNumber || '',
+                amount: amount,
+                status: 'قيد الانتظار',
+                createdAt: new Date().toLocaleDateString('ar-EG') + ' ' + new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
+            };
+
+            payoutsData.push(payoutReq);
+            localStorage.setItem('magroup_payouts', JSON.stringify(payoutsData));
+            db.ref('payouts/' + payoutReq.id).set(payoutReq);
+
+            alert('تم إرسال طلب السحب بنجاح للمشرف! يمكنك متابعة حالته من أسفل الشاشة.');
+            toggleModal('payoutModal', false);
+            loadMarketerData();
+        }
+
+        function renderMarketerPayouts() {
+            const container = document.getElementById('marketerPayoutsList');
+            if (!container) return;
+            container.innerHTML = '';
+            const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id).slice().reverse();
+
+            if (myPayouts.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">لا توجد طلبات سحب سابقة.</p>';
+                return;
+            }
+
+            myPayouts.forEach(p => {
+                let statusBadge = 'text-amber-500 bg-amber-500/10';
+                if (p.status === 'مقبول') statusBadge = 'text-emerald-500 bg-emerald-500/10';
+                if (p.status === 'مرفوض') statusBadge = 'text-red-500 bg-red-500/10';
+
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-slate-800 dark:text-slate-100">${Number(p.amount).toLocaleString()} ج.م</span>
+                            <span class="text-[10px] text-slate-400 block">${p.createdAt || ''}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${p.status}</span>
+                    </div>
+                `;
+            });
         }
 
         // --- COMPLAINTS ENGINE (MARKETER) ---
@@ -1016,9 +1169,62 @@
             document.getElementById('adminTotalMarketers').innerText = usersData.length;
             document.getElementById('adminOpenComplaints').innerText = complaintsData.filter(c => c.status === 'مفتوحة').length;
 
+            renderAdminPayouts();
             renderAdminMarketers();
             renderAdminComplaints();
             renderAdminSettings();
+        }
+
+        function renderAdminPayouts() {
+            const tbody = document.getElementById('adminPayoutsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (payoutsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد طلبات سحب حتي الآن.</td></tr>';
+                return;
+            }
+
+            const sorted = payoutsData.slice().reverse();
+
+            sorted.forEach(p => {
+                let statusBadge = 'bg-amber-500/20 text-amber-500';
+                if (p.status === 'مقبول') statusBadge = 'bg-emerald-500/20 text-emerald-500';
+                if (p.status === 'مرفوض') statusBadge = 'bg-red-500/20 text-red-500';
+
+                let actionBtns = '';
+                if (p.status === 'قيد الانتظار') {
+                    actionBtns = `
+                        <button onclick="updatePayoutStatus('${p.id}', 'مقبول')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition ml-1">قبول</button>
+                        <button onclick="updatePayoutStatus('${p.id}', 'مرفوض')" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition">رفض</button>
+                    `;
+                } else {
+                    actionBtns = `<span class="text-slate-400 font-semibold">تم القرار (${p.status})</span>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="p-3 font-bold">${p.marketerName}</td>
+                        <td class="p-3 font-black text-emerald-500">${Number(p.amount).toLocaleString()} ج.م</td>
+                        <td class="p-3"><span class="font-bold">${p.payMethod || ''}:</span> ${p.payNumber || ''}</td>
+                        <td class="p-3 text-slate-400">${p.createdAt || ''}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded text-[10px] font-bold ${statusBadge}">${p.status}</span></td>
+                        <td class="p-3">${actionBtns}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updatePayoutStatus(id, newStatus) {
+            const req = payoutsData.find(p => p.id === id);
+            if (req) {
+                req.status = newStatus;
+                localStorage.setItem('magroup_payouts', JSON.stringify(payoutsData));
+                db.ref('payouts/' + id).update({ status: newStatus });
+                
+                alert(newStatus === 'مقبول' ? 'تم قبول طلب السحب وخصم المبلغ رسمياً من حساب المسوق!' : 'تم رفض طلب السحب.');
+                loadAdminData();
+            }
         }
 
         function renderAdminMarketers() {
