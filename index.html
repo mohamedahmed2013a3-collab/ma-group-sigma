@@ -269,9 +269,14 @@
             <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <h3 class="font-bold text-lg"><i class="fa-solid fa-users text-gold-500 ml-2"></i> سجل العملاء والمبيعات (Lead Tracker)</h3>
-                    <button onclick="toggleModal('addClientModal', true)" class="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-slate-900 font-bold rounded-xl text-xs transition">
-                        <i class="fa-plus ml-1"></i> إضافة عميل جديد
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleModal('addMarketerProjectModal', true)" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-gold-500 hover:text-slate-900 text-white font-bold rounded-xl text-xs transition">
+                            <i class="fa-folder-plus ml-1"></i> إضافة مشروع جديد
+                        </button>
+                        <button onclick="toggleModal('addClientModal', true)" class="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-slate-900 font-bold rounded-xl text-xs transition">
+                            <i class="fa-plus ml-1"></i> إضافة عميل جديد
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Table -->
@@ -291,6 +296,14 @@
                             <!-- Dynamic Content -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- MARKETER RESOURCES SECTION (المصادر) -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-folder-open text-gold-500 ml-2"></i> المصادر والملفات التعليمية (PDF)</h3>
+                <div id="marketerResourcesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Resources for Marketer -->
                 </div>
             </div>
 
@@ -402,6 +415,70 @@
                 </div>
             </div>
 
+            <!-- MARKETER SUBMITTED PROJECTS SECTION (المشاريع المضافة من المسوقين) -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-folder-plus text-gold-500 ml-2"></i> المشاريع المضافة من المسوقين</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">اسم المسوق</th>
+                                <th class="p-3">اسم المشروع</th>
+                                <th class="p-3">التفاصيل الكاملة</th>
+                                <th class="p-3">تاريخ الإضافة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMarketerProjectsTable" class="divide-y border-slate-200 dark:border-slate-800">
+                            <!-- Dynamic Marketer Projects -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ADMIN RESOURCES MANAGEMENT SECTION (إدارة المصادر - المشرف) -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-file-pdf text-gold-500 ml-2"></i> المصادر والملفات (PDF)</h3>
+                </div>
+
+                <!-- Add Resource Form -->
+                <form onsubmit="handleAddResource(event)" class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
+                    <span class="font-bold text-sm block"><i class="fa-plus circle text-emerald-500 ml-1"></i> إضافة مصدر جديد (PDF)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">عنوان الملف / المصدر</label>
+                            <input type="text" id="resTitle" required placeholder="مثال: دليل التسويق العقاري الشامل" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">اختيار ملف PDF من الجهاز أو رابط PDF</label>
+                            <input type="file" id="resFile" accept="application/pdf" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">أو أدخل رابط PDF المباشر (اختياري)</label>
+                        <input type="url" id="resUrl" placeholder="https://example.com/document.pdf" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 outline-none">
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 bg-gold-500 text-slate-900 font-bold rounded-xl text-xs hover:brightness-110 transition">رفع وإضافة إلى المصادر</button>
+                </form>
+
+                <!-- Admin Resources List -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">عنوان المصدر</th>
+                                <th class="p-3">اسم الملف</th>
+                                <th class="p-3">تاريخ الإضافة</th>
+                                <th class="p-3">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminResourcesTable" class="divide-y border-slate-200 dark:border-slate-800">
+                            <!-- Dynamic Admin Resources -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Complaints Support Desk (Admin Side) -->
             <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <h3 class="font-bold text-lg mb-4"><i class="fa-solid fa-headset text-gold-500 ml-2"></i> مركز حل الشكاوى والاستفسارات</h3>
@@ -414,6 +491,27 @@
     </main>
 
     <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Add Marketer Project Modal -->
+    <div id="addMarketerProjectModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-folder-plus text-gold-500 ml-2"></i> إضافة مشروع جديد خاص بك</h3>
+                <button onclick="toggleModal('addMarketerProjectModal', false)" class="text-slate-400 hover:text-white"><i class="fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="handleAddMarketerProject(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold mb-1">اسم المشروع</label>
+                    <input type="text" id="marketerProjectName" required placeholder="مثال: مشروع برج الياسمين" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">تفاصيل المشروع بالكامل</label>
+                    <textarea id="marketerProjectDetails" rows="4" required placeholder="اكتب تفاصيل المشروع، الموقع، الخدمات المتاحة..." class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-900 font-bold rounded-xl hover:brightness-110 transition">إضافة المشروع وعرضه على المشرف</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Payout Request Modal -->
     <div id="payoutModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
@@ -629,6 +727,8 @@
         let clientsData = JSON.parse(localStorage.getItem('magroup_clients')) || [];
         let complaintsData = JSON.parse(localStorage.getItem('magroup_complaints')) || [];
         let payoutsData = JSON.parse(localStorage.getItem('magroup_payouts')) || [];
+        let marketerProjectsData = JSON.parse(localStorage.getItem('magroup_marketer_projects')) || [];
+        let resourcesData = JSON.parse(localStorage.getItem('magroup_resources')) || [];
 
         // 1. Sync Settings from DB
         db.ref('settings').on('value', (snapshot) => {
@@ -686,6 +786,32 @@
             } else {
                 payoutsData = [];
                 localStorage.setItem('magroup_payouts', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        // 6. Sync Marketer Projects in Realtime
+        db.ref('marketer_projects').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                marketerProjectsData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_marketer_projects', JSON.stringify(marketerProjectsData));
+            } else {
+                marketerProjectsData = [];
+                localStorage.setItem('magroup_marketer_projects', JSON.stringify([]));
+            }
+            refreshCurrentUI();
+        });
+
+        // 7. Sync Resources in Realtime
+        db.ref('resources').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const val = snapshot.val();
+                resourcesData = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+                localStorage.setItem('magroup_resources', JSON.stringify(resourcesData));
+            } else {
+                resourcesData = [];
+                localStorage.setItem('magroup_resources', JSON.stringify([]));
             }
             refreshCurrentUI();
         });
@@ -850,6 +976,7 @@
                 payMethod,
                 payNumber,
                 tier: 'برونزي',
+                addedFunds: 0,
                 isBlocked: false,
                 isPayVerified: false,
                 role: 'marketer'
@@ -937,7 +1064,7 @@
             document.getElementById('weeklyTargetText').innerText = `${soldClients.length} / ${platformSettings.weeklyTarget} عميل`;
             document.getElementById('monthlyTargetText').innerText = `${soldClients.length} / ${platformSettings.monthlyTarget} عميل`;
 
-            // Wallet Values Calculation (Total Earned - Approved Payouts)
+            // Wallet Values Calculation (Total Earned + Added Funds by Admin - Approved Payouts)
             let totalEarned = 0;
             let totalPending = 0;
             myClients.forEach(c => {
@@ -949,7 +1076,8 @@
             // Calculate Total Approved Withdrawn Amounts
             const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
             const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
-            let totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
+            let addedFunds = parseFloat(currentUser.addedFunds) || 0;
+            let totalAvailable = Math.max(0, totalEarned + addedFunds - totalWithdrawn);
 
             document.getElementById('walletAvailable').innerText = totalAvailable.toLocaleString() + ' ج.م';
             document.getElementById('walletPending').innerText = totalPending.toLocaleString() + ' ج.م';
@@ -962,6 +1090,41 @@
             renderMarketerClientsTable(myClients);
             renderMarketerComplaints();
             renderMarketerPayouts();
+            renderMarketerResources();
+        }
+
+        // --- MARKETER ADD PROJECT ---
+        function handleAddMarketerProject(e) {
+            e.preventDefault();
+            const name = document.getElementById('marketerProjectName').value.trim();
+            const details = document.getElementById('marketerProjectDetails').value.trim();
+
+            if (!name || !details) return;
+
+            const newProj = {
+                id: 'PROJ-' + Date.now(),
+                marketerId: currentUser.id,
+                marketerName: currentUser.name,
+                name: name,
+                details: details,
+                createdAt: new Date().toLocaleDateString('ar-EG') + ' ' + new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
+            };
+
+            marketerProjectsData.push(newProj);
+            localStorage.setItem('magroup_marketer_projects', JSON.stringify(marketerProjectsData));
+            db.ref('marketer_projects/' + newProj.id).set(newProj);
+
+            // Add project name to global list so marketer can choose it when adding clients
+            if (!projectsList.includes(name)) {
+                projectsList.push(name);
+                renderProjects();
+            }
+
+            alert('تم إدراج المشروع بنجاح وسيظهر للمشرف بكافة التفاصيل!');
+            document.getElementById('marketerProjectName').value = '';
+            document.getElementById('marketerProjectDetails').value = '';
+            toggleModal('addMarketerProjectModal', false);
+            loadMarketerData();
         }
 
         function handleAddClient(e) {
@@ -1017,6 +1180,32 @@
             });
         }
 
+        // --- MARKETER RESOURCES VIEW ---
+        function renderMarketerResources() {
+            const container = document.getElementById('marketerResourcesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (resourcesData.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 col-span-full">لا توجد مصادر أو ملفات متاحة حالياً.</p>';
+                return;
+            }
+
+            resourcesData.forEach(res => {
+                container.innerHTML += `
+                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex justify-between items-center transition hover:border-gold-500/50">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-file-pdf text-red-500 ml-1.5 text-sm"></i> ${res.title}</h4>
+                            <p class="text-[10px] text-slate-400">${res.fileName || 'مستند PDF'} • ${res.createdAt || ''}</p>
+                        </div>
+                        <a href="${res.url}" target="_blank" download="${res.fileName || 'file.pdf'}" class="px-3 py-1.5 bg-gold-500 hover:bg-gold-600 text-slate-900 font-bold rounded-xl text-xs transition flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الملف
+                        </a>
+                    </div>
+                `;
+            });
+        }
+
         // --- PAYOUT SYSTEM ENGINE ---
         function requestPayout() {
             const myClients = clientsData.filter(c => c.marketerId === currentUser.id);
@@ -1026,7 +1215,8 @@
             });
             const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
             const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
-            const totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
+            let addedFunds = parseFloat(currentUser.addedFunds) || 0;
+            const totalAvailable = Math.max(0, totalEarned + addedFunds - totalWithdrawn);
 
             if (totalAvailable <= 0) {
                 alert('عذراً، لا يوجد لديك رصيد متاح للسحب حالياً!');
@@ -1052,7 +1242,8 @@
             });
             const myPayouts = payoutsData.filter(p => p.marketerId === currentUser.id);
             const totalWithdrawn = myPayouts.filter(p => p.status === 'مقبول').reduce((sum, p) => sum + Number(p.amount), 0);
-            const totalAvailable = Math.max(0, totalEarned - totalWithdrawn);
+            let addedFunds = parseFloat(currentUser.addedFunds) || 0;
+            const totalAvailable = Math.max(0, totalEarned + addedFunds - totalWithdrawn);
 
             if (amount <= 0 || amount > totalAvailable) {
                 alert('يرجى إدخال مبلغ صحيح لا يتجاوز الرصيد المتاح!');
@@ -1135,6 +1326,7 @@
 
         function renderMarketerComplaints() {
             const container = document.getElementById('marketerComplaintsList');
+            if (!container) return;
             container.innerHTML = '';
             const myComps = complaintsData.filter(c => c.marketerId === currentUser.id);
 
@@ -1171,6 +1363,8 @@
 
             renderAdminPayouts();
             renderAdminMarketers();
+            renderAdminMarketerProjects();
+            renderAdminResources();
             renderAdminComplaints();
             renderAdminSettings();
         }
@@ -1227,14 +1421,40 @@
             }
         }
 
+        // --- ADMIN ADD FUNDS TO MARKETER ---
+        function addFundsToMarketer(id) {
+            const u = usersData.find(x => x.id === id);
+            if (!u) return;
+
+            const amountStr = prompt(`عايز تضيف كام لحساب المسوق (${u.name})؟ (بالجنيه)`);
+            if (amountStr === null) return;
+
+            const amount = parseFloat(amountStr);
+            if (isNaN(amount) || amount <= 0) {
+                alert('يرجى إدخال مبلغ صحيح أكبر من الصفر!');
+                return;
+            }
+
+            const isConfirmed = confirm(`هل أنت تأكد من إضافة ${amount.toLocaleString()} ج.م إلى رصيد المسوق (${u.name})؟`);
+            if (isConfirmed) {
+                u.addedFunds = (parseFloat(u.addedFunds) || 0) + amount;
+                saveUsers();
+                alert(`تمت إضافة ${amount.toLocaleString()} ج.م إلى حساب المسوق (${u.name}) بنجاح!`);
+            }
+        }
+
         function renderAdminMarketers() {
             const table = document.getElementById('adminMarketersTable');
             table.innerHTML = '';
 
             usersData.forEach(u => {
+                let currentAdded = (parseFloat(u.addedFunds) || 0);
                 table.innerHTML += `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                        <td class="p-3 font-bold">${u.name}</td>
+                        <td class="p-3 font-bold">
+                            ${u.name}
+                            ${currentAdded > 0 ? `<br><span class="text-[10px] text-emerald-500 font-normal">(أموال مضافة: +${currentAdded.toLocaleString()} ج.م)</span>` : ''}
+                        </td>
                         <td class="p-3">${u.email}</td>
                         <td class="p-3 font-mono text-gold-500 font-bold">${u.password}</td>
                         <td class="p-3">${u.phone}<br><span class="text-[10px] text-slate-400">${u.payMethod}: ${u.payNumber}</span></td>
@@ -1249,12 +1469,115 @@
                                 ${u.isBlocked ? 'موقوف' : 'نشط'}
                             </span>
                         </td>
-                        <td class="p-3 flex items-center gap-1">
+                        <td class="p-3 flex items-center gap-1 flex-wrap">
+                            <button onclick="addFundsToMarketer('${u.id}')" class="px-2 py-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1" title="إضافة أموال">
+                                <i class="fa-solid fa-circle-plus"></i> إضافة أموال
+                            </button>
                             <button onclick="openEditMarketer('${u.id}')" class="p-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg" title="تعديل"><i class="fa-pen-to-square"></i></button>
                             <button onclick="toggleBlockMarketer('${u.id}')" class="p-1.5 ${u.isBlocked ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} rounded-lg" title="حظر / إلغاء">
                                 <i class="fa-solid ${u.isBlocked ? 'fa-unlock' : 'fa-lock'}"></i>
                             </button>
                             <button onclick="deleteMarketer('${u.id}')" class="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg" title="حذف"><i class="fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- RENDER MARKETER SUBMITTED PROJECTS FOR ADMIN ---
+        function renderAdminMarketerProjects() {
+            const tbody = document.getElementById('adminMarketerProjectsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (marketerProjectsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">لا توجد مشاريع مضافة من قبل المسوقين حتى الآن.</td></tr>';
+                return;
+            }
+
+            marketerProjectsData.slice().reverse().forEach(proj => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="p-3 font-bold text-gold-500">${proj.marketerName || 'مسوق'}</td>
+                        <td class="p-3 font-bold">${proj.name}</td>
+                        <td class="p-3 text-slate-600 dark:text-slate-300 max-w-md whitespace-pre-line">${proj.details}</td>
+                        <td class="p-3 text-slate-400 text-[10px]">${proj.createdAt || ''}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- ADMIN RESOURCES (PDF) MANAGEMENT ---
+        function handleAddResource(e) {
+            e.preventDefault();
+            const title = document.getElementById('resTitle').value.trim();
+            const urlInput = document.getElementById('resUrl').value.trim();
+            const fileInput = document.getElementById('resFile');
+
+            if (!title) return;
+
+            const saveResourceObj = (fileUrl, fileName) => {
+                const resObj = {
+                    id: 'RES-' + Date.now(),
+                    title: title,
+                    url: fileUrl,
+                    fileName: fileName || 'ملف PDF',
+                    createdAt: new Date().toLocaleDateString('ar-EG')
+                };
+
+                resourcesData.push(resObj);
+                localStorage.setItem('magroup_resources', JSON.stringify(resourcesData));
+                db.ref('resources/' + resObj.id).set(resObj);
+
+                alert('تم إدراج المستند/PDF بنجاح في المصادر!');
+                document.getElementById('resTitle').value = '';
+                document.getElementById('resUrl').value = '';
+                fileInput.value = '';
+                loadAdminData();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    saveResourceObj(evt.target.result, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else if (urlInput) {
+                saveResourceObj(urlInput, 'مستند PDF عبر رابط');
+            } else {
+                alert('يرجى تحديد ملف PDF من الجهاز أو إضافة رابط مباشر للملف!');
+            }
+        }
+
+        function deleteResource(id) {
+            if (confirm('هل أنت تأكد من حذف هذا المصدر نهائياً؟')) {
+                resourcesData = resourcesData.filter(r => r.id !== id);
+                localStorage.setItem('magroup_resources', JSON.stringify(resourcesData));
+                db.ref('resources/' + id).remove();
+                loadAdminData();
+            }
+        }
+
+        function renderAdminResources() {
+            const tbody = document.getElementById('adminResourcesTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (resourcesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">لا توجد مصادر مرفوعة حالياً.</td></tr>';
+                return;
+            }
+
+            resourcesData.slice().reverse().forEach(res => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="p-3 font-bold">${res.title}</td>
+                        <td class="p-3 text-slate-400">${res.fileName || 'ملف PDF'}</td>
+                        <td class="p-3 text-slate-400">${res.createdAt || ''}</td>
+                        <td class="p-3 flex items-center gap-2">
+                            <a href="${res.url}" target="_blank" class="p-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg" title="معاينة"><i class="fa-solid fa-eye"></i></a>
+                            <button onclick="deleteResource('${res.id}')" class="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg" title="حذف"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1321,6 +1644,7 @@
         // --- COMPLAINTS ENGINE (ADMIN) ---
         function renderAdminComplaints() {
             const list = document.getElementById('adminComplaintsList');
+            if (!list) return;
             list.innerHTML = '';
 
             if (complaintsData.length === 0) {
@@ -1393,6 +1717,7 @@
         function renderProjects() {
             const select = document.getElementById('clientProject');
             const adminList = document.getElementById('adminProjectsList');
+            if (!select || !adminList) return;
             select.innerHTML = '';
             adminList.innerHTML = '';
 
@@ -1423,7 +1748,9 @@
 
         // --- VISUAL ANALYTICS & EXPORT REPORT ---
         function initChart() {
-            const ctx = document.getElementById('marketerChart').getContext('2d');
+            const canvas = document.getElementById('marketerChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
