@@ -118,7 +118,10 @@
                         <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm" placeholder="marketer@magroup.com">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">كلمة السر</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold">كلمة السر</label>
+                            <button type="button" onclick="openForgotPasswordModal()" class="text-xs text-gold-500 hover:underline font-bold">هل نسيت الباسورد؟</button>
+                        </div>
                         <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-gold-500 outline-none text-sm" placeholder="••••••••">
                     </div>
                     <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-xl font-bold gold-gradient text-slate-900 shadow-lg hover:brightness-110 transition">تسجيل الدخول</button>
@@ -492,6 +495,57 @@
 
     <!-- ================= MODALS & OVERLAYS ================= -->
 
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white"><i class="fa-solid fa-key text-gold-500 ml-2"></i> استعادة كلمة السر</h3>
+                <button onclick="toggleModal('forgotPasswordModal', false)" class="text-slate-400 hover:text-white"><i class="fa-xmark text-xl"></i></button>
+            </div>
+            <form id="forgotPasswordForm" onsubmit="handleForgotPasswordSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-xs font-bold mb-1">الاسم المسجل</label>
+                    <input type="text" id="forgotName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">البريد الإلكتروني المسجل</label>
+                    <input type="email" id="forgotEmail" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">رقم الهاتف المسجل بالمنصة</label>
+                    <input type="tel" id="forgotPhone" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">طريقة الدفع المسجلة بالمنصة</label>
+                    <select id="forgotPayMethod" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                        <option value="محفظة إلكترونية (فودافون/اتصالات/أورنج/أنا فودافون)">محفظة إلكترونية (فودافون كاش / أورنج / إتصلات / وي)</option>
+                        <option value="حساب بنكي">حساب بنكي</option>
+                        <option value="إنستا باي (InstaPay)">إنستا باي (InstaPay)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-900 font-bold rounded-xl text-xs hover:brightness-110 transition mt-2">إرسال الطلب</button>
+            </form>
+            <div id="forgotSuccessMsg" class="hidden p-4 mt-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-500 text-center font-bold text-xs space-y-2">
+                <i class="fa-solid fa-circle-check text-2xl block"></i>
+                <p>سوف يتم الرد عليكم من خلال الايميل في خلال 24 ساعه</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Account Waitlist Modal -->
+    <div id="pendingNoticeModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-amber-500/50 text-center space-y-4">
+            <div class="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">حسابك في قائمة الانتظار</h3>
+            <p id="pendingNoticeText" class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                <!-- Custom text loaded dynamically from settings -->
+            </p>
+            <button onclick="toggleModal('pendingNoticeModal', false)" class="w-full py-2.5 bg-gold-500 text-slate-900 font-bold rounded-xl text-xs hover:brightness-110 transition">حسناً، فهمت</button>
+        </div>
+    </div>
+
     <!-- Add Marketer Project Modal -->
     <div id="addMarketerProjectModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800">
@@ -603,6 +657,13 @@
                         </div>
                     </div>
                     <button onclick="savePlatformLimits()" class="px-3 py-1.5 bg-gold-500 text-slate-900 font-bold rounded-lg">حفظ القيود والأهداف</button>
+                </div>
+
+                <!-- Custom Pending / Waitlist Message Settings -->
+                <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                    <span class="font-bold block">رسالة قائمة الانتظار للمسوقين الجدد</span>
+                    <textarea id="settingPendingMsg" rows="2" placeholder="الرسالة التي تظهر للمسوق في قائمة الانتظار..." class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"></textarea>
+                    <button onclick="savePendingMsg()" class="px-3 py-1.5 bg-gold-500 text-slate-900 font-bold rounded-lg">حفظ نص الرسالة</button>
                 </div>
 
                 <!-- Custom Blocked User Message -->
@@ -719,6 +780,7 @@
             maxRegistrations: 100,
             weeklyTarget: 3,
             monthlyTarget: 12,
+            pendingMsg: 'تم تسجيل حسابك بنجاح! حسابك الآن في قائمة الانتظار وسوف يتم تفعيله بعد مراجعة المشرف.',
             blockedMsg: 'عذراً، تم إيقاف حسابك مؤقتاً لمراجعة النشاط. يرجى التواصل مع الإدارة.'
         };
 
@@ -879,6 +941,19 @@
             else el.classList.add('hidden');
         }
 
+        function openForgotPasswordModal() {
+            document.getElementById('forgotPasswordForm').reset();
+            document.getElementById('forgotPasswordForm').classList.remove('hidden');
+            document.getElementById('forgotSuccessMsg').classList.add('hidden');
+            toggleModal('forgotPasswordModal', true);
+        }
+
+        function handleForgotPasswordSubmit(e) {
+            e.preventDefault();
+            document.getElementById('forgotPasswordForm').classList.add('hidden');
+            document.getElementById('forgotSuccessMsg').classList.remove('hidden');
+        }
+
         // --- AUTHENTICATION ENGINE ---
         function handleLogin(e) {
             e.preventDefault();
@@ -901,6 +976,15 @@
             if (user) {
                 if (user.isBlocked) {
                     showBlockedOverlay(user.blockedMessage || platformSettings.blockedMsg);
+                    return;
+                }
+                if (user.status === 'pending' || !user.status) {
+                    document.getElementById('pendingNoticeText').innerText = platformSettings.pendingMsg || 'حسابك في قائمة الانتظار وسيتم تفعيله بعد مراجعة المشرف.';
+                    toggleModal('pendingNoticeModal', true);
+                    return;
+                }
+                if (user.status === 'rejected') {
+                    alert('عذراً، تم رفض هذا الحساب من قبل إدارة المنصة.');
                     return;
                 }
                 currentUser = user;
@@ -979,6 +1063,7 @@
                 addedFunds: 0,
                 isBlocked: false,
                 isPayVerified: false,
+                status: 'pending', // Pending Waitlist state
                 role: 'marketer'
             };
 
@@ -986,8 +1071,11 @@
             localStorage.setItem('magroup_users', JSON.stringify(usersData));
             db.ref('users/' + newUser.id).set(newUser);
 
-            alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            // Display Pending Waitlist Notice Modal
+            document.getElementById('pendingNoticeText').innerText = platformSettings.pendingMsg || 'تم تسجيل حسابك بنجاح! حسابك الآن في قائمة الانتظار وسوف يتم تفعيله بعد مراجعة المشرف.';
+            toggleModal('pendingNoticeModal', true);
             switchAuthTab('login');
+            document.getElementById('registerForm').reset();
         }
 
         function logout() {
@@ -1443,12 +1531,35 @@
             }
         }
 
+        function updateMarketerStatus(id, newStatus) {
+            const u = usersData.find(x => x.id === id);
+            if (u) {
+                u.status = newStatus;
+                saveUsers();
+                alert(newStatus === 'active' ? `تم قبول حساب المسوق (${u.name}) وتفعيله بنجاح!` : `تم رفض حساب المسوق (${u.name}).`);
+            }
+        }
+
         function renderAdminMarketers() {
             const table = document.getElementById('adminMarketersTable');
             table.innerHTML = '';
 
             usersData.forEach(u => {
                 let currentAdded = (parseFloat(u.addedFunds) || 0);
+                let statusText = 'قيد الانتظار';
+                let statusClass = 'bg-amber-500/20 text-amber-500';
+
+                if (u.isBlocked) {
+                    statusText = 'موقوف';
+                    statusClass = 'bg-red-500/20 text-red-500';
+                } else if (u.status === 'active') {
+                    statusText = 'مقبول / نشط';
+                    statusClass = 'bg-emerald-500/20 text-emerald-500';
+                } else if (u.status === 'rejected') {
+                    statusText = 'مرفوض';
+                    statusClass = 'bg-red-500/20 text-red-500';
+                }
+
                 table.innerHTML += `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                         <td class="p-3 font-bold">
@@ -1465,13 +1576,15 @@
                         </td>
                         <td class="p-3"><span class="font-bold text-gold-500">${u.tier}</span></td>
                         <td class="p-3">
-                            <span class="px-2 py-1 rounded text-[10px] font-bold ${u.isBlocked ? 'bg-red-500/20 text-red-500' : 'bg-emerald-500/20 text-emerald-500'}">
-                                ${u.isBlocked ? 'موقوف' : 'نشط'}
+                            <span class="px-2 py-1 rounded text-[10px] font-bold ${statusClass}">
+                                ${statusText}
                             </span>
                         </td>
                         <td class="p-3 flex items-center gap-1 flex-wrap">
+                            <button onclick="updateMarketerStatus('${u.id}', 'active')" class="p-1.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg" title="قبول الحساب"><i class="fa-solid fa-check"></i></button>
+                            <button onclick="updateMarketerStatus('${u.id}', 'rejected')" class="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg" title="رفض الحساب"><i class="fa-solid fa-xmark"></i></button>
                             <button onclick="addFundsToMarketer('${u.id}')" class="px-2 py-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1" title="إضافة أموال">
-                                <i class="fa-solid fa-circle-plus"></i> إضافة أموال
+                                <i class="fa-solid fa-circle-plus"></i> أموال
                             </button>
                             <button onclick="openEditMarketer('${u.id}')" class="p-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg" title="تعديل"><i class="fa-pen-to-square"></i></button>
                             <button onclick="toggleBlockMarketer('${u.id}')" class="p-1.5 ${u.isBlocked ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} rounded-lg" title="حظر / إلغاء">
@@ -1688,6 +1801,9 @@
             document.getElementById('settingWeeklyTarget').value = platformSettings.weeklyTarget;
             document.getElementById('settingMonthlyTarget').value = platformSettings.monthlyTarget;
             document.getElementById('settingBlockedMsg').value = platformSettings.blockedMsg;
+            if (document.getElementById('settingPendingMsg')) {
+                document.getElementById('settingPendingMsg').value = platformSettings.pendingMsg || 'تم تسجيل حسابك بنجاح! حسابك الآن في قائمة الانتظار وسوف يتم تفعيله بعد مراجعة المشرف.';
+            }
         }
 
         function updateAdminPass() {
@@ -1708,6 +1824,13 @@
             alert('تم حفظ الأهداف والحدود!');
         }
 
+        function savePendingMsg() {
+            const msg = document.getElementById('settingPendingMsg').value;
+            platformSettings.pendingMsg = msg;
+            db.ref('settings').update({ pendingMsg: msg });
+            alert('تم حفظ نص رسالة قائمة الانتظار بنجاح!');
+        }
+
         function saveBlockedMsg() {
             platformSettings.blockedMsg = document.getElementById('settingBlockedMsg').value;
             db.ref('settings').update({ blockedMsg: platformSettings.blockedMsg });
@@ -1720,13 +1843,12 @@
             if (!select || !adminList) return;
             select.innerHTML = '';
             adminList.innerHTML = '';
-
-            projectsList.forEach((p, idx) => {
+            projectsList.forEach((p, index) => {
                 select.innerHTML += `<option value="${p}">${p}</option>`;
                 adminList.innerHTML += `
-                    <li class="flex justify-between items-center bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-800">
+                    <li class="flex justify-between items-center bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
                         <span>${p}</span>
-                        <button onclick="removeProject(${idx})" class="text-red-500 font-bold"><i class="fa-trash"></i></button>
+                        <button onclick="removeProject(${index})" class="text-red-500 hover:text-red-700"><i class="fa-trash"></i></button>
                     </li>
                 `;
             });
@@ -1734,30 +1856,30 @@
 
         function addProject() {
             const val = document.getElementById('newProjectName').value.trim();
-            if (val) {
+            if (val && !projectsList.includes(val)) {
                 projectsList.push(val);
                 document.getElementById('newProjectName').value = '';
                 renderProjects();
             }
         }
 
-        function removeProject(idx) {
-            projectsList.splice(idx, 1);
+        function removeProject(index) {
+            projectsList.splice(index, 1);
             renderProjects();
         }
 
-        // --- VISUAL ANALYTICS & EXPORT REPORT ---
+        // --- CHART.JS INITIALIZATION ---
+        let marketerChart = null;
         function initChart() {
-            const canvas = document.getElementById('marketerChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            new Chart(ctx, {
+            const ctx = document.getElementById('marketerChart');
+            if (!ctx) return;
+            marketerChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
+                    labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
                     datasets: [{
-                        label: 'العملاء المحققين',
-                        data: [2, 5, 3, 7],
+                        label: 'المبيعات (ج.م)',
+                        data: [0, 5000, 12000, 8000, 15000, 20000, 25000],
                         borderColor: '#d4a359',
                         backgroundColor: 'rgba(212, 163, 89, 0.1)',
                         fill: true,
@@ -1767,14 +1889,25 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
         }
 
         function exportReportPDF() {
             const element = document.getElementById('marketerDashboard');
-            html2pdf().from(element).save(`MA_Group_Report_${currentUser.name}.pdf`);
+            const opt = {
+                margin:       0.5,
+                filename:     `تقرير_الأداء_${currentUser ? currentUser.name : 'مسوق'}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
     </script>
 </body>
